@@ -9,6 +9,8 @@ import io.qameta.allure.*;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
+import static com.spotify.oauth2.util.FakerUtils.generateDescription;
+import static com.spotify.oauth2.util.FakerUtils.generateName;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -23,7 +25,7 @@ public class PlayListTests {
     @Description("Should create playlist with valid data")
     @Test(description = "Create Playlist")
     public void create_playlist(){
-        PlayList req_playList = playlistBuilder("Rest Auto PlayList 3.1","Rest Auto PlayList Description 3.1",false);
+        PlayList req_playList = playlistBuilder(generateName(),generateDescription(),false);
 
         Response response = PlayListApi.post(req_playList);
         assertStatusCode(response.statusCode(), 201);
@@ -35,12 +37,12 @@ public class PlayListTests {
     @Test
     public void create_and_get_playlist(){
         //create playlist
-        PlayList req_playList = playlistBuilder("Rest Auto PlayList 3.2.1","Rest Auto PlayList Description 3.2.1",false);
-        Response response = PlayListApi.post(req_playList);
+        PlayList req_playList_one = playlistBuilder(generateName(),generateDescription(),false);
+        Response response = PlayListApi.post(req_playList_one);
         assertStatusCode(response.statusCode(), 201);
 
         PlayList deserialize_playlist = response.as(PlayList.class);
-        assert_playlist(deserialize_playlist, req_playList);
+        assert_playlist(deserialize_playlist, req_playList_one);
         //get playlist id
        String playlistID = deserialize_playlist.getId();
        System.out.println("playlist id: "+playlistID);
@@ -49,7 +51,7 @@ public class PlayListTests {
        Response res = PlayListApi.get(playlistID);
        assertStatusCode(res.statusCode(), 200);
        PlayList response_playlist = res.as(PlayList.class);
-       assert_playlist(response_playlist, req_playList);
+       assert_playlist(response_playlist, req_playList_one);
     }
 
     @Story("Get Playlist Story")
@@ -66,7 +68,7 @@ public class PlayListTests {
     @Story("Update Playlist Story")
     @Test
     public void update_playlist(){
-        PlayList req_playList = playlistBuilder("Rest Auto PlayList 3.4","Rest Auto PlayList Description 3.4",false);
+        PlayList req_playList = playlistBuilder(generateName(),generateDescription(),false);
 
         Response response = PlayListApi.update(req_playList, DataLoader.getInstance().update_playlist_id());
         assertStatusCode(response.statusCode(), 200);
@@ -76,7 +78,7 @@ public class PlayListTests {
     @Story("Create Playlist Story with empty name")
     @Test
     public void create_playlist_without_name(){
-        PlayList req_playList = playlistBuilder("","Rest Auto PlayList Description 3.5",false);
+        PlayList req_playList = playlistBuilder("",generateDescription(),false);
 
         Response response = PlayListApi.post(req_playList);
         assertStatusCode(response.statusCode(), 400);
@@ -89,7 +91,7 @@ public class PlayListTests {
     @Test
     public void create_playlist_with_expired_token(){
         String invalid_acc_token = "ABD";
-        PlayList req_playList = playlistBuilder("Rest Auto PlayList 3.6","Rest Auto PlayList Description 3.6",false);
+        PlayList req_playList = playlistBuilder(generateName(),generateDescription(),false);
 
         Response response = PlayListApi.post(invalid_acc_token, req_playList);
         assertStatusCode(response.statusCode(),401);

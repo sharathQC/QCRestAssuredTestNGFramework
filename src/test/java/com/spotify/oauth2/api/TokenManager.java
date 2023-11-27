@@ -23,6 +23,7 @@ public class TokenManager {
                 System.out.println("Access token still active, Good to go");
             }
         }catch (Exception e){
+            e.printStackTrace();
             throw new RuntimeException("!!!Failed to get token!!!");
         }
         return access_token;

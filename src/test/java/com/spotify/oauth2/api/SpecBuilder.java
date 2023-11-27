@@ -24,7 +24,7 @@ public class SpecBuilder {
         return new RequestSpecBuilder().
                 setBaseUri("https://accounts.spotify.com").
                 setContentType(ContentType.URLENC).
-                addFilter(new AllureRestAssured()).
+                addFilter(new AllureRestAssured()).//Allure Report is used for creating detailed reports about tests
                 log(LogDetail.ALL).build();
     }
 
